@@ -32,3 +32,10 @@ This example demonstrates how to toggle an LED using an STM32F4 microcontroller 
 
 1. Compile and flash the code to your STM32F4 board.
 2. Observe the LED connected to PD12 toggling ON and OFF.
+
+## Resources
+
+1. https://www.st.com/en/microcontrollers-microprocessors/stm32f407-417/documentation.html
+2. https://github.com/niekiran/Embedded-C
+3. https://www.udemy.com/course/microcontroller-embedded-c-programming/
+
