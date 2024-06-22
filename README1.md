@@ -1,85 +1,40 @@
-# STM32F407G Emergency SOS signalling
+# Bare-metal-programming
+Bare-metal programming of stm32f407 discovery board. Here no Hardware abstraction layer are used and code is written from scratch.
+# 1. LED Toggle Example for STM32F4 (ARM Cortex-M4)
 
-## Description
-This project demonstrates how to read input from GPIOA pin 0 on an STM32F407G Discovery Board and control an LED connected to GPIOD pin 12 based on the input status.
+This example demonstrates how to toggle an LED using an STM32F4 microcontroller (specifically, the ARM Cortex-M4 core). The code configures a GPIO pin as an output and toggles the state of the LED connected to that pin.
 
-## Table of Contents
-- Overview
-- Hardware Requirements
-- Software Requirements
-- Installation
-- Usage
-- Code
-- Contributing
-- License
-- Contact
+## Prerequisites
 
-## Overview
-The project configures GPIOA pin 0 as an input and GPIOD pin 12 as an output. When the input button pin is high (connected to VDD), the LED turns on. When the input button pin is low (connected to GND), the LED turns off.
+- STM32F4 development board (e.g., STM32F407 Discovery)
+- STM32CubeIDE or other compatible development environment
+- Basic knowledge of STM32 peripherals and registers
 
-## Hardware Requirements
-- STM32F407G Discovery Board
-- LED
-- Resistors
-- Breadboard and jumper wires
+## Hardware Setup
 
-## Software Requirements
-- STM32CubeIDE or any other suitable IDE for STM32 development
-- STM32CubeMX (optional for pin configuration)
+1. Connect an LED to GPIO pin PD12 (or any other available GPIO pin).
+2. Ensure that the development board is properly powered and connected.
 
-## Installation
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/anjan4136/Bare-metal-programming.git
-    cd Bare-metal-programming
-    ```
+## Code Explanation
 
-2. Open the project in STM32CubeIDE.
-
-3. Build and flash the project to your STM32F407G Discovery Board.
+1. Clock Configuration
+   - The code enables the clock for GPIO D peripheral by setting the 3rd bit in the AHB1ENR register.
+2. GPIO Configuration
+   - The GPIO pin PD12 is configured as an output by setting the 24th bit in the MODER register.
+3. LED Toggle Loop
+   - The code enters an infinite loop where it toggles the state of the LED
+     - Sets the 12th bit of the output data register to turn ON the LED.
+     - Introduces a delay (for human observation).
+     - Clears the 12th bit to turn OFF the LED.
+     - Introduces another delay.
 
 ## Usage
-1. Connect the LED to GPIOD pin 12 with a suitable resistor.
-2. Connect a button or any input source to GPIOA pin 0.
-3. Power on the STM32F407G Discovery Board.
-4. The LED will turn on when the input button pin is high and turn off when the input button pin is low.
 
-## Code
-Here's the main code for the project:
+1. Compile and flash the code to your STM32F4 board.
+2. Observe the LED connected to PD12 toggling ON and OFF.
 
-```c
-int main(void)
-{
-    uint32_t volatile *const pClkCtrlReg = (uint32_t*)0x40023830;
-    uint32_t volatile *const pPortDModeReg = (uint32_t*)0x40020C00;
-    uint32_t volatile *const pPortDOutReg = (uint32_t*)0x40020C14;
+## Resources
 
-    uint32_t volatile *const pPortAModeReg = (uint32_t*)0x40020000;
-    uint32_t const volatile *const pPortAInReg = (uint32_t*)0x40020010;
-
-    // Enable the clock for GPIOD and GPIOA peripherals in the AHB1ENR
-    *pClkCtrlReg |= (1 << 3);
-    *pClkCtrlReg |= (1 << 0);
-
-    // Configuring PD12 as output
-    *pPortDModeReg &= ~(3 << 24);
-    // Make 24th bit position as 1 (SET)
-    *pPortDModeReg |= (1 << 24);
-
-    // Configure PA0 as input mode (GPIOA MODE REGISTER)
-    *pPortAModeReg &= ~(3 << 0);
-
-    while (1)
-    {
-        // Read the pin status of the pin PA0 (GPIOA INPUT DATA REGISTER)
-        uint8_t buttonStatus = (uint8_t)(*pPortAInReg & 0x1); // Zero out all other bits except bit 0
-
-        if (buttonStatus) {
-            // Turn on the LED
-            *pPortDOutReg |= (1 << 12);
-        } else {
-            // Turn off the LED
-            *pPortDOutReg &= ~(1 << 12);
-        }
-    }
-}
+1. https://www.st.com/en/microcontrollers-microprocessors/stm32f407-417/documentation.html
+2. https://github.com/niekiran/Embedded-C
+3. https://www.udemy.com/course/microcontroller-embedded-c-programming/
